@@ -1,7 +1,12 @@
+
+-- Criando o banco 
 create database cadastro
+
+-- Definição da região
 default character set utf8
 default collate utf8_general_ci; 
 
+-- Definindo tabela com chave primária
 create table pessoas(
 id int not null auto_increment,
 nome varchar(30) not null,

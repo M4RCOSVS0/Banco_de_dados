@@ -1,3 +1,5 @@
+
+-- criando uma tabela
 create table pessoas(
 nome varchar(30),
 idade tinyint,
