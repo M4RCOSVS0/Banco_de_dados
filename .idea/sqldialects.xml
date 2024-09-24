@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/../Banco-de-dados/Exercicio 00 - Revisao.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Exercicio 00 - Revisao.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Trigger/Exercicio 01 - Trigger.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Trigger/Exercicio 03 - Trigger.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Trigger/Exercicio 04 - Trigger.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Trigger/Exercicio 05 - Trigger.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Trigger/Exercicio 07 - Trigger.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Trigger/Exercicio 08 - Trigger.sql" dialect="TSQL" />
+  </component>
+</project>
