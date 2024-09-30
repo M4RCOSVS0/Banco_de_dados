@@ -37,7 +37,7 @@ BEGIN
 
 
         -- Compara e insere no log se o total novo for maior
-        IF @SALARIO + @GRATIFICACAO >= @TOTAL_VELHO * 1.3
+        IF @SALARIO + @GRATIFICACAO > @TOTAL_VELHO * 1.3
         BEGIN
             RAISERROR ('AUMENTO MAIOR QUE 30',16,1);
 		    ROLLBACK;

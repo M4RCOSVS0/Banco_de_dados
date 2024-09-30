@@ -35,7 +35,7 @@ BEGIN
     DECLARE @SALARIO    NUMERIC(10,2);
 
     DECLARE C_FUNCIONARIO CURSOR FOR
-        SELECT *
+        SELECT matricula, nome,cargo,salario
         FROM INSERTED;
 
     OPEN C_FUNCIONARIO;
@@ -45,7 +45,7 @@ BEGIN
     WHILE (@@FETCH_STATUS = 0)
     BEGIN
         INSERT INTO TB_LOG_FUNCIONARIO(dt_log, tipo_operacao, matricula, nome, modificacao)
-        VALUES(GETDATE(),'I',@MATRICULA,@NOME,'Adicionado novo CLT 6-1')
+        VALUES(GETDATE(),'I',@MATRICULA,@NOME,'Adcionado novo funcionario')
 
         FETCH NEXT FROM C_FUNCIONARIO INTO @MATRICULA,@NOME,@CARGO,@SALARIO;
     END
@@ -82,15 +82,18 @@ BEGIN
 
     WHILE (@@FETCH_STATUS = 0)
     BEGIN
-        PRINT @SALARIO
-        PRINT @SALARIO_A
-        IF @SALARIO != @SALARIO_A
+
+        IF @SALARIO > @SALARIO_A
             INSERT INTO TB_LOG_FUNCIONARIO(dt_log, tipo_operacao, matricula, nome, modificacao)
-            VALUES(GETDATE(),'A',@MATRICULA,@NOME,'Adicionado novo salario')
+            VALUES(GETDATE(),'A',@MATRICULA,@NOME,'Aumento de salario');
+        IF @SALARIO < @SALARIO_A
+            INSERT INTO TB_LOG_FUNCIONARIO(dt_log, tipo_operacao, matricula, nome, modificacao)
+            VALUES(GETDATE(),'A',@MATRICULA,@NOME,'Redução de salario');
         IF @CARGO != @CARGO_A
             INSERT INTO TB_LOG_FUNCIONARIO(dt_log, tipo_operacao, matricula, nome, modificacao)
-            VALUES(GETDATE(),'A',@MATRICULA,@NOME,'Adicionado novo cargo')
+            VALUES(GETDATE(),'A',@MATRICULA,@NOME,'Alteração de cargo');
         FETCH NEXT FROM C_FUNCIONARIO INTO @MATRICULA,@NOME,@CARGO,@SALARIO,@SALARIO_A,@CARGO_A;
+
     END
 
     CLOSE C_FUNCIONARIO;

@@ -17,7 +17,7 @@ AFTER INSERT,UPDATE ,DELETE
 AS
 BEGIN
     DECLARE @HoraAtual TIME = CONVERT(TIME, GETDATE());
-        IF (@HoraAtual >= '12:00:00' AND @HoraAtual < '14:00:00') OR (@HoraAtual >= '18:00:00' AND @HoraAtual < '22:00:00')
+        IF (@HoraAtual >= '10:00:00' AND @HoraAtual < '14:00:00') OR (@HoraAtual >= '18:00:00' AND @HoraAtual < '22:00:00')
         BEGIN
             RAISERROR('TRANSAÇÃO FORA DE HORARIO', 16, 1);
             ROLLBACK;

@@ -81,7 +81,7 @@ BEGIN
     DECLARE @VALOR_ANTIGO      NUMERIC(10,2);
 
     DECLARE C_VENDAS CURSOR FOR
-        SELECT *
+        SELECT inserted.cd_venda, inserted.dt_venda, inserted.cd_produto, inserted.quantidade, inserted.valor
         FROM INSERTED;
 
     OPEN C_VENDAS;
