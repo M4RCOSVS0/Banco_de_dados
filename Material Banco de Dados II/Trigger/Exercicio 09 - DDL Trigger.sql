@@ -18,17 +18,39 @@ CREATE TABLE TB_LOG_AUDITORIA
 
 CREATE OR ALTER TRIGGER TG_DDL_ALTERACOES
 ON DATABASE
-FOR DDL_TABLE_EVENTS
+FOR DDL_TABLE_EVENTS, DDL_VIEW_EVENTS, DDL_PROCEDURE_EVENTS
 AS
 BEGIN
-    DECLARE @EVENTO XML;
-    SET @EVENTO = EVENTDATA(); -- Capture the event data
-    PRINT CONVERT(NVARCHAR(MAX), @EVENTO);
+    DECLARE @evento XML
+    SET @evento = EVENTDATA()
+    INSERT INTO TB_LOG_AUDITORIA(DT_LOG, NM_LOGIN, NM_USUARIO, BANCO, ESQUEMA, NM_OBJETO, TIPO_OBJETO, EVENTO, COMANDO)
+    VALUES (GETDATE(),
+            @evento.value('(/EVENT_INSTANCE/LoginName)[1]','nvarchar(100)'),
+            CURRENT_USER,
+            @evento.value('(/EVENT_INSTANCE/DatabaseName)[1]','nvarchar(100)'),
+            @evento.value('(/EVENT_INSTANCE/SchemaName)[1]','nvarchar(100)'),
+            @evento.value('(/EVENT_INSTANCE/ObjectName)[1]','nvarchar(100)'),
+            @evento.value('(/EVENT_INSTANCE/ObjectType)[1]','nvarchar(100)'),
+            @evento.value('(/EVENT_INSTANCE/EventType)[1]','nvarchar(100)'),
+            @evento.value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]','nvarchar(2000)')
+    )
 END;
 
-CREATE TABLE TB_C (
- CD_CARGO INT NOT NULL PRIMARY KEY,
- NM_CARGO VARCHAR(50) NOT NULL
-)
+
 
 SELECT * FROM TB_LOG_AUDITORIA;
+
+create table teste(
+    teste int
+)
+
+create procedure sp_teste
+    as
+    begin
+        print 'TESTE'
+    end
+
+create view vw_teste as
+select * from teste
+
+exec sp_teste
