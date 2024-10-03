@@ -1,0 +1,107 @@
+CREATE DATABASE TG10;
+
+USE TG10;
+
+CREATE TABLE TB_NOMECLATURA
+(
+    ID   INT IDENTITY (1,1) PRIMARY KEY,
+    NOME VARCHAR(5),
+    TIPO VARCHAR(10)
+)
+
+INSERT INTO TB_NOMECLATURA(NOME, TIPO)
+VALUES ('TB_','TABLE'),
+       ('VW_','VIEW'),
+       ('SP_','PROCEDURE')
+
+INSERT INTO TB_NOMECLATURA(NOME, TIPO)
+VALUES ('FU_','FUNCTION')FUNCTION
+
+SELECT * FROM TB_NOMECLATURA
+
+CREATE OR ALTER TRIGGER TG_DDL_NOMECLATURA
+ON DATABASE
+FOR CREATE_TABLE, CREATE_VIEW, CREATE_PROCEDURE, CREATE_FUNCTION
+AS
+BEGIN
+    DECLARE @evento XML;
+    DECLARE @objectType NVARCHAR(100);
+    DECLARE @objectName NVARCHAR(100);
+    DECLARE @sql NVARCHAR(MAX);
+    DECLARE @TIPO VARCHAR(10);
+    DECLARE @NOME VARCHAR(5);
+
+    SET @evento = EVENTDATA();
+
+    SET @objectType = @evento.value('(/EVENT_INSTANCE/ObjectType)[1]', 'nvarchar(100)');
+    SET @objectName = @evento.value('(/EVENT_INSTANCE/ObjectName)[1]', 'nvarchar(100)');
+
+    DECLARE C_NOMES CURSOR FOR
+        SELECT NOME, TIPO
+        FROM TB_NOMECLATURA;
+
+    OPEN C_NOMES;
+
+    FETCH NEXT FROM C_NOMES INTO @NOME, @TIPO;
+
+    WHILE (@@FETCH_STATUS = 0)
+    BEGIN
+
+        IF (@TIPO = @objectType) AND (LEFT(@objectName, LEN(@NOME)) <> @NOME)
+        BEGIN
+            SET @sql = N'EXEC sp_rename ''' + @objectName + ''', ''' + @NOME + @objectName + '''';
+            EXEC sp_executesql @sql;
+            PRINT 'MUDANÇA DE NOME!'
+        END
+
+        FETCH NEXT FROM C_NOMES INTO @NOME, @TIPO;
+    END
+
+    CLOSE C_NOMES;
+    DEALLOCATE C_NOMES;
+END;
+
+
+CREATE TABLE NOME(
+    TEST INT
+)
+
+create procedure teste
+    as
+    begin
+        print 'TESTE'
+    end
+
+create view teste as
+select * from TB_NOMECLATURA
+
+CREATE FUNCTION dbo.Dobrar2Numero (@numero INT)
+RETURNS INT
+AS
+BEGIN
+    RETURN @numero * 2
+END
+
+DROP FUNCTION Dobrar2Numero
+
+SELECT * FROM NOME
+
+--pega todas tabelas do banco.
+SELECT TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE';
+
+--pega todos procedimentos do banco.
+SELECT ROUTINE_NAME
+FROM INFORMATION_SCHEMA.ROUTINES
+WHERE ROUTINE_TYPE = 'PROCEDURE';
+
+--pega todas views da tabela
+SELECT TABLE_NAME
+FROM INFORMATION_SCHEMA.VIEWS;
+
+--pega todas as funcões do banco.
+SELECT ROUTINE_NAME
+FROM INFORMATION_SCHEMA.ROUTINES
+WHERE ROUTINE_TYPE = 'FUNCTION';
+
