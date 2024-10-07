@@ -27,16 +27,16 @@ DECLARE @NomeDependente NVARCHAR(100)
 
 -- Cursor para Funcionários
 DECLARE Funcionario_Cursor CURSOR FOR
-SELECT Matricula, Nome
-FROM TB_FUNCIONARIO
-ORDER BY Matricula
+    SELECT Matricula, Nome
+    FROM TB_FUNCIONARIO
+    ORDER BY Matricula
 
 -- Cursor para Dependentes
 DECLARE Dependente_Cursor CURSOR FOR
-SELECT Nome
-FROM TB_DEPENDENTE
-WHERE MatriculaFuncionario = @Matricula
-ORDER BY Nome
+    SELECT Nome
+    FROM TB_DEPENDENTES
+    WHERE Matricula = @Matricula
+    ORDER BY Nome
 
 -- Abrindo o cursor de Funcionários
 OPEN Funcionario_Cursor
