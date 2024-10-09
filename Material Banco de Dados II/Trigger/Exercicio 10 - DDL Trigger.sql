@@ -28,41 +28,25 @@ BEGIN
     DECLARE @objectType NVARCHAR(100);
     DECLARE @objectName NVARCHAR(100);
     DECLARE @sql NVARCHAR(MAX);
-    DECLARE @TIPO VARCHAR(10);
-    DECLARE @NOME VARCHAR(5);
+    DECLARE @PREFIXO VARCHAR(5);
 
     SET @evento = EVENTDATA();
 
     SET @objectType = @evento.value('(/EVENT_INSTANCE/ObjectType)[1]', 'nvarchar(100)');
     SET @objectName = @evento.value('(/EVENT_INSTANCE/ObjectName)[1]', 'nvarchar(100)');
 
-    DECLARE C_NOMES CURSOR FOR
-        SELECT NOME, TIPO
-        FROM TB_NOMECLATURA;
+    SET @PREFIXO = (SELECT NOME FROM TB_NOMECLATURA WHERE TIPO = @objectType)
 
-    OPEN C_NOMES;
-
-    FETCH NEXT FROM C_NOMES INTO @NOME, @TIPO;
-
-    WHILE (@@FETCH_STATUS = 0)
+    IF (@PREFIXO IS NOT NULL) OR (LEFT(@objectName,3) <> @PREFIXO)
     BEGIN
-
-        IF (@TIPO = @objectType) AND (LEFT(@objectName, LEN(@NOME)) <> @NOME)
-        BEGIN
-            SET @sql = N'EXEC sp_rename ''' + @objectName + ''', ''' + @NOME + @objectName + '''';
-            EXEC sp_executesql @sql;
-            PRINT 'MUDANÇA DE NOME!'
-        END
-
-        FETCH NEXT FROM C_NOMES INTO @NOME, @TIPO;
+        SET @sql = N'EXEC sp_rename ''' + @objectName + ''', ''' + @PREFIXO + @objectName + '''';
+        EXEC sp_executesql @sql;
+        PRINT 'MUDANÇA DE NOME!';
     END
-
-    CLOSE C_NOMES;
-    DEALLOCATE C_NOMES;
 END;
 
 
-CREATE TABLE NOME(
+CREATE TABLE NOM(
     TEST INT
 )
 
