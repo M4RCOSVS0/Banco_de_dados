@@ -43,16 +43,17 @@ create table tb_ondas_placar (
 -- Testes
 
 insert into tb_bateria values (10,17)
+SELECT * FROM tb_bateria
 
 
 -- Primeira onda Gabriel
-insert into tb_ondas_bateria values (1, 10, 9, 9.5, 9.3, 9.2)    
+insert into tb_ondas_bateria(ID_BATERIA, ID_SURFISTA, NOTA_1, NOTA_2, NOTA_3, NOTA_4) values (4, 10, 9, 9.5, 9.3, 9.2)
 
 -- Segunda onda Gabriel
-insert into tb_ondas_bateria values (1, 10, 5, 5, 5, 5)
+insert into tb_ondas_bateria values (3, 10, 5, 5, 5, 5)
 
 -- Terceira onda Gabriel
-insert into tb_ondas_bateria values (1, 10, 10, 10, 10, 10)
+insert into tb_ondas_bateria values (3, 10, 10, 10, 10, 10)
 
 -- Primeira Onda Julian
 insert into tb_ondas_bateria values (1, 17, 8.7, 8, 8.3, 8.1)
@@ -102,11 +103,76 @@ end
 SELECT * FROM tb_ondas_placar
 
 --2
-CREATE TRIGGER TG_REMOVE_BATERIA
+CREATE OR ALTER TRIGGER TG_REMOVER_PLACAR
 ON tb_bateria
-AFTER delete
-as
-begin
+AFTER DELETE
+AS
+BEGIN
     DECLARE @ID_BATERIA INT;
-    SET @ID_BATERIA = (SELECT id_bateria FROM deleted)
+    DECLARE C_BATERIA CURSOR FOR
+        SELECT id_bateria
+        FROM deleted;
+    OPEN C_BATERIA
+    FETCH C_BATERIA INTO @ID_BATERIA;
+    WHILE (@@FETCH_STATUS = 0)
+    BEGIN
+        DELETE FROM tb_ondas_placar WHERE id_bateria = @id_bateria;
+        FETCH C_BATERIA INTO @ID_BATERIA;
+    END
+    CLOSE C_BATERIA
+    DEALLOCATE C_BATERIA
+end
+
+select * from tb_ondas_placar
+
+delete from tb_bateria where id_bateria = 2;
+
+--3
+CREATE OR ALTER TRIGGER TG_ATUALIZAR_PLACAR
+ON tb_ondas_bateria
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @id_onda int;
+    DECLARE @id_surfista int;
+    DECLARE @nota_1  numeric(10,2);
+    DECLARE @nota_2  numeric(10,2);
+    DECLARE @nota_3  numeric(10,2);
+    DECLARE @nota_4  numeric(10,2);
+    DECLARE @MEDIA NUMERIC(10,2);
+    DECLARE @NOTA_FINAL_1 NUMERIC(10,2);
+    DECLARE @NOTA_FINAL_2 NUMERIC(10,2);
+
+    DECLARE C_NOTAS_SURFISTA CURSOR FOR
+        SELECT ID_ONDA,ID_SURFISTA,NOTA_1,NOTA_2,NOTA_3,NOTA_4
+        FROM inserted;
+    OPEN C_NOTAS_SURFISTA
+    FETCH C_NOTAS_SURFISTA INTO @ID_ONDA,@ID_SURFISTA,@NOTA_1,@NOTA_2,@NOTA_3,@NOTA_4
+    WHILE (@@FETCH_STATUS = 0)
+    BEGIN
+        SET @NOTA_FINAL_1 = ISNULL((SELECT nota_final_onda1 FROM tb_ondas_placar WHERE id_surfista = @ID_SURFISTA),0);
+        SET @NOTA_FINAL_2 = ISNULL((SELECT nota_final_onda2 FROM tb_ondas_placar WHERE id_surfista = @ID_SURFISTA),0);
+        SET @MEDIA = (@nota_1+@nota_2+@nota_3+@nota_4)/4.0
+        IF @MEDIA > @NOTA_FINAL_1
+        BEGIN
+            UPDATE tb_ondas_placar
+            SET nota_final_onda1 = @MEDIA
+            WHERE id_surfista = @id_surfista
+            IF @NOTA_FINAL_1 > @NOTA_FINAL_2
+            BEGIN
+                UPDATE tb_ondas_placar
+                SET nota_final_onda2 = @NOTA_FINAL_1
+                WHERE id_surfista = @id_surfista
+            end
+        end
+        ELSE IF @MEDIA > @NOTA_FINAL_2
+        BEGIN
+            UPDATE tb_ondas_placar
+            SET nota_final_onda2 = @MEDIA
+            WHERE id_surfista = @id_surfista
+        end
+        FETCH C_NOTAS_SURFISTA INTO @ID_ONDA,@ID_SURFISTA,@NOTA_1,@NOTA_2,@NOTA_3,@NOTA_4
+    END
+    CLOSE C_NOTAS_SURFISTA
+    DEALLOCATE C_NOTAS_SURFISTA
 end
