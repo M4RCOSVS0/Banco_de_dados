@@ -130,10 +130,11 @@ delete from tb_bateria where id_bateria = 2;
 --3
 CREATE OR ALTER TRIGGER TG_ATUALIZAR_PLACAR
 ON tb_ondas_bateria
-AFTER INSERT
+AFTER INSERT,update
 AS
 BEGIN
     DECLARE @id_onda int;
+    DECLARE @ID_BATERIA INT;
     DECLARE @id_surfista int;
     DECLARE @nota_1  numeric(10,2);
     DECLARE @nota_2  numeric(10,2);
@@ -147,31 +148,36 @@ BEGIN
         SELECT ID_ONDA,ID_SURFISTA,NOTA_1,NOTA_2,NOTA_3,NOTA_4
         FROM inserted;
     OPEN C_NOTAS_SURFISTA
-    FETCH C_NOTAS_SURFISTA INTO @ID_ONDA,@ID_SURFISTA,@NOTA_1,@NOTA_2,@NOTA_3,@NOTA_4
+    FETCH C_NOTAS_SURFISTA INTO @ID_ONDA,@ID_BATERIA,@ID_SURFISTA,@NOTA_1,@NOTA_2,@NOTA_3,@NOTA_4
     WHILE (@@FETCH_STATUS = 0)
     BEGIN
-        SET @NOTA_FINAL_1 = ISNULL((SELECT nota_final_onda1 FROM tb_ondas_placar WHERE id_surfista = @ID_SURFISTA),0);
-        SET @NOTA_FINAL_2 = ISNULL((SELECT nota_final_onda2 FROM tb_ondas_placar WHERE id_surfista = @ID_SURFISTA),0);
+
+        SELECT @NOTA_FINAL_1 = NOTA_FINAL_ONDA1,
+               @NOTA_FINAL_2 = NOTA_FINAL_ONDA2
+        FROM tb_ondas_placar
+        WHERE id_bateria = @ID_BATERIA AND id_surfista = @ID_SURFISTA
+
         SET @MEDIA = (@nota_1+@nota_2+@nota_3+@nota_4)/4.0
+
         IF @MEDIA > @NOTA_FINAL_1
         BEGIN
             UPDATE tb_ondas_placar
             SET nota_final_onda1 = @MEDIA
-            WHERE id_surfista = @id_surfista
+            WHERE id_surfista = @id_surfista AND id_bateria = @ID_BATERIA
             IF @NOTA_FINAL_1 > @NOTA_FINAL_2
             BEGIN
                 UPDATE tb_ondas_placar
                 SET nota_final_onda2 = @NOTA_FINAL_1
-                WHERE id_surfista = @id_surfista
+                WHERE id_surfista = @id_surfista AND id_bateria = @ID_BATERIA
             end
         end
         ELSE IF @MEDIA > @NOTA_FINAL_2
         BEGIN
             UPDATE tb_ondas_placar
             SET nota_final_onda2 = @MEDIA
-            WHERE id_surfista = @id_surfista
+            WHERE id_surfista = @id_surfista AND id_bateria = @ID_BATERIA
         end
-        FETCH C_NOTAS_SURFISTA INTO @ID_ONDA,@ID_SURFISTA,@NOTA_1,@NOTA_2,@NOTA_3,@NOTA_4
+        FETCH C_NOTAS_SURFISTA INTO @ID_ONDA,@ID_BATERIA,@ID_SURFISTA,@NOTA_1,@NOTA_2,@NOTA_3,@NOTA_4
     END
     CLOSE C_NOTAS_SURFISTA
     DEALLOCATE C_NOTAS_SURFISTA
