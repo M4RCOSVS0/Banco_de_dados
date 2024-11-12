@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/Material Banco de Dados I/teste.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Avaliacao I/Avaliação Repositiva/Avaliacao.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Avaliação II/Avaliação Atual/Avaliacao II 2024/AVALIACAO2.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/Material Banco de Dados II/Avaliação II/Avaliações Anteriores/Avaliacao II 2021/Avaliacao_II.sql" dialect="TSQL" />
