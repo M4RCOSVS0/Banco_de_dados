@@ -1,10 +1,10 @@
 -- Script para os Labs 05 e 05.1
--- Objetivo: Criação do Esquema de Locadora de DVDs
+-- Objetivo: Criaï¿½ï¿½o do Esquema de Locadora de DVDs
 
 CREATE DATABASE lab05
 
 use lab05
--- 1) Criação do Esquema
+-- 1) Criaï¿½ï¿½o do Esquema
 
 --DROP TABLE TB_ALUGUEL
 --DROP TABLE TB_DVD
@@ -72,9 +72,9 @@ ALTER TABLE TB_ALUGUEL ADD CONSTRAINT FK_TB_ALUGUEL_CD_DVD
 FOREIGN KEY (cd_dvd) REFERENCES TB_DVD (cd_dvd)
 
 ALTER TABLE TB_ALUGUEL ADD CONSTRAINT CK_ST_PAGAMENTO
-CHECK (ST_PAGAMENTO IN ('PAGO','NÃO PAGO'))
+CHECK (ST_PAGAMENTO IN ('PAGO','Nï¿½O PAGO'))
 
--- 2) Inserção de dados
+-- 2) Inserï¿½ï¿½o de dados
 
 -- Tabela de Usuarios
 
@@ -126,5 +126,60 @@ INSERT INTO TB_ALUGUEL (cd_usuario, cd_dvd, dt_aluguel, dt_devolucao,
                         dt_devolvido, valor_aluguel, st_pagamento)
 VALUES (3, 1003, '20190601','20190605',NULL, 2.00, 'PAGO')
 
+-- a
 
+SELECT 
+	COUNT(alu.cd_dvd) as 'Total de AluguÃ©is'
+from 
+	TB_ALUGUEL alu;
 
+-- b
+SELECT 
+	COUNT(alu.cd_dvd) as 'Total de AluguÃ©is'
+from 
+	TB_ALUGUEL alu
+WHERE 
+	dt_devolvido IS NULL;
+    
+-- c 
+
+SELECT 
+	SUM(alu.valor_aluguel) as 'Total de Receitas'
+from 
+	TB_ALUGUEL alu
+    
+-- d
+SELECT
+    ISNULL(SUM(alu.valor_multa), 0) as 'Total de Receitas'
+FROM
+    TB_ALUGUEL alu
+    
+-- e
+SELECT 
+	C.NM_CATEGORIA,
+    COUNT(A.CD_DVD) AS 'TOTAL ALUGUEIS'
+FROM 
+	TB_CATEGORIA C 
+JOIN 
+	TB_DVD D ON (C.CD_CATEGORIA = D.CD_CATEGORIA)
+JOIN 
+	TB_ALUGUEL A ON (D.CD_DVD = A.CD_DVD)
+GROUP BY 
+	C.NM_CATEGORIA    
+    
+-- f
+SELECT 
+	C.NM_CATEGORIA,
+    SUM(A.valor_aluguel) AS 'TOTAL ALUGUEIS'
+FROM 
+	TB_CATEGORIA C 
+JOIN 
+	TB_DVD D ON (C.CD_CATEGORIA = D.CD_CATEGORIA)
+JOIN 
+	TB_ALUGUEL A ON (D.CD_DVD = A.CD_DVD)
+GROUP BY
+	C.NM_CATEGORIA   
+HAVING
+    SUM(A.valor_aluguel) > 3
+
+SELECT * FROM TB_ALUGUEL

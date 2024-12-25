@@ -125,60 +125,57 @@ VALUES (2, 1002, '20190601','20190605',NULL, 2.00, 'PAGO')
 INSERT INTO TB_ALUGUEL (cd_usuario, cd_dvd, dt_aluguel, dt_devolucao,
                         dt_devolvido, valor_aluguel, st_pagamento)
 VALUES (3, 1003, '20190601','20190605',NULL, 2.00, 'PAGO')
--- a
 
-SELECT 
-	COUNT(alu.cd_dvd) as 'Total de Aluguéis'
-from 
-	TB_ALUGUEL alu;
+--A
+SELECT
+    td.titulo,
+    TC.nm_categoria
+FROM
+    TB_DVD td
+JOIN
+    TB_CATEGORIA TC on td.cd_categoria = TC.cd_categoria
 
--- b
-SELECT 
-	COUNT(alu.cd_dvd) as 'Total de Aluguéis'
-from 
-	TB_ALUGUEL alu
-WHERE 
-	dt_devolvido IS NULL;
-    
--- c 
+--B
+SELECT
+    td.titulo
+FROM
+    TB_DVD td
+JOIN
+    TB_CATEGORIA TC on td.cd_categoria = TC.cd_categoria
+WHERE
+    TC.nm_categoria = 'LANCAMENTO'
 
-SELECT 
-	SUM(alu.valor_aluguel) as 'Total de Receitas'
-from 
-	TB_ALUGUEL alu
-    
--- d
+--C
+SELECT
+    td.titulo
+FROM
+    TB_DVD td
+JOIN
+    TB_CATEGORIA TC on td.cd_categoria = TC.cd_categoria
+WHERE
+    TC.nm_categoria = 'LANCAMENTO'
 
-SELECT 
-	SUM(alu.valor_multa) as 'Total de Receitas'
-from 
-	TB_ALUGUEL alu
-    
--- e
-SELECT 
-	C.NM_CATEGORIA,
-    COUNT(A.CD_DVD) AS 'TOTAL ALUGUEIS'
-FROM 
-	TB_CATEGORIA C 
-JOIN 
-	TB_DVD D ON (C.CD_CATEGORIA = D.CD_CATEGORIA)
-JOIN 
-	TB_ALUGUEL A ON (D.CD_DVD = A.CD_DVD)
-GROUP BY 
-	C.NM_CATEGORIA    
-    
--- f 
+--D
+SELECT
+    TD.titulo,
+    TA.dt_devolucao
+FROM
+    TB_DVD td
+JOIN
+    TB_ALUGUEL TA on td.cd_dvd = TA.cd_dvd
+WHERE
+    ta.dt_devolvido IS NULL
 
-SELECT 
-	C.NM_CATEGORIA,
-    COUNT(A.CD_DVD) AS 'TOTAL ALUGUEIS'
-FROM 
-	TB_CATEGORIA C 
-JOIN 
-	TB_DVD D ON (C.CD_CATEGORIA = D.CD_CATEGORIA)
-JOIN 
-	TB_ALUGUEL A ON (D.CD_DVD = A.CD_DVD)
-WHERE 
-	c.vl_aluguel > 1
-GROUP BY 
-	C.NM_CATEGORIA   
+--E
+SELECT
+    TU.nm_usuario,
+    TD.titulo,
+    TA.dt_devolucao
+FROM
+    TB_DVD td
+JOIN
+    TB_ALUGUEL TA on td.cd_dvd = TA.cd_dvd
+JOIN
+    TB_USUARIO TU on TA.cd_usuario = TU.cd_usuario
+WHERE
+    ta.dt_devolvido IS NULL
