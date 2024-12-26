@@ -125,14 +125,15 @@ SELECT * FROM TB_PROJETO;
 
 --1
 SELECT 
-	fun.NM_FUNCIONARIO AS 'Funcionário',
-    car.nm_cargo AS 'Cargo'
-FROM 
-	TB_FUNCIONARIO fun
+    fun.NM_FUNCIONARIO AS 'Funcionário',
+    car.NM_CARGO AS 'Cargo'
+FROM
+    TB_FUNCIONARIO fun
 JOIN
-	TB_CARGO car ON(car.CD_CARGO = fun.CD_CARGO)
+    TB_CARGO car ON car.CD_CARGO = fun.CD_CARGO
 WHERE
-	fun.situacao = 'ATIVO';
+    fun.SITUACAO = 'ATIVO'
+    AND car.NM_CARGO IN ('ANALISTA', 'PROGRAMADOR');
 
 --2
 
@@ -160,7 +161,7 @@ JOIN
 JOIN
 	TB_CARGO car on (car.CD_CARGO = fun.CD_CARGO)
 GROUP by 
- 	bug.CD_FUNCIONARIO,fun.NM_FUNCIONARIO,car.NM_CARGO
+ 	fun.NM_FUNCIONARIO,car.NM_CARGO
 
 --4
 SELECT 
@@ -176,14 +177,13 @@ JOIN
 WHERE
 	fun.situacao = 'ATIVO'
 GROUP by 
- 	bug.CD_FUNCIONARIO,fun.NM_FUNCIONARIO,car.NM_CARGO
+ 	fun.NM_FUNCIONARIO,car.NM_CARGO
 
 --5
 SELECT
 	pjt.NM_PROJETO,
     pjt.DT_INICIO,
     COUNT(bug.CD_BUG) as 'Quantidade de bugs'
-    
 FROM 
 	TB_PROJETO pjt
 left JOIN
@@ -199,7 +199,6 @@ SELECT
 	pjt.NM_PROJETO,
     pjt.DT_INICIO,
     COUNT(bug.CD_BUG) as 'Quantidade de bugs'
-    
 FROM 
 	TB_PROJETO pjt
 left JOIN
