@@ -1,0 +1,60 @@
+# Ignore arquivos de backup
+*.bak
+*.backup
+
+# Ignore arquivos de log
+*.log
+
+# Ignore arquivos temporários
+*.tmp
+*.temp
+
+# Ignore arquivos de configuração local
+*.config
+*.settings
+
+# Ignore diretórios de build
+/build/
+/dist/
+
+# Ignore arquivos de banco de dados locais
+*.db
+*.sqlite
+*.sqlitedb
+
+# Ignore arquivos gerados por IDEs
+.idea/
+.vscode/
+*.swp
+
+# Ignore arquivos de dump
+*.dmp
+*.dump
+
+# Ignore arquivos de credenciais
+*.env
+*.key
+*.pem
+
+# Ignore arquivos compilados
+*.o
+*.obj
+
+# Ignore arquivos de pacotes
+*.tar
+*.gz
+*.zip
+*.rar
+
+# Ignore arquivos de execução
+*.exe
+*.dll
+*.so
+
+# Ignore diretórios de dependências
+node_modules/
+vendor/
+.idea/sqldialects.xml
+.idea/Banco_de_dados.iml
+.idea/Banco_de_dados.iml
+.idea/sqldialects.xml
