@@ -50,6 +50,8 @@
 *.exe
 *.dll
 *.so
+*.idea
+
 
 # Ignore diretórios de dependências
 node_modules/
